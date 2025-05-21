@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import { createContext, useContext, useEffect, useState } from "react";
 
@@ -24,7 +23,7 @@ const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 
 export function ThemeProvider({
   children,
-  defaultTheme = "system",
+  defaultTheme = "light",  // <-- changed here from "system" to "light"
   storageKey = "forenlock-ui-theme",
   ...props
 }: ThemeProviderProps) {
@@ -34,29 +33,29 @@ export function ThemeProvider({
 
   useEffect(() => {
     const root = window.document.documentElement;
-    
+
     // Add transition class before changing theme for smooth transition
     root.classList.add('theme-transition');
-    
+
     root.classList.remove("light", "dark");
-    
+
     if (theme === "system") {
       const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
         .matches
         ? "dark"
         : "light";
-      
+
       root.classList.add(systemTheme);
       return;
     }
-    
+
     root.classList.add(theme);
-    
+
     // Remove transition class after a short delay to prevent transition on page load
     const transitionTimeout = setTimeout(() => {
       root.classList.remove('theme-transition');
     }, 300);
-    
+
     return () => clearTimeout(transitionTimeout);
   }, [theme]);
 
@@ -77,9 +76,9 @@ export function ThemeProvider({
 
 export const useTheme = () => {
   const context = useContext(ThemeProviderContext);
-  
+
   if (context === undefined)
     throw new Error("useTheme must be used within a ThemeProvider");
-  
+
   return context;
 };
